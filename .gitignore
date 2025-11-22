@@ -1,0 +1,14 @@
+# Virtual environments
+venv/
+env/
+__pycache__/
+
+# OS files
+.DS_Store
+
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
