@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FaultX - Equipment Input</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #EAD8C0 0%, #F5E9D9 50%, #EAD8C0 100%);
+      color: #333;
+      min-height: 100vh;
+      padding: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body:before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(128,61,59,0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: float 20s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(-50px, -50px) rotate(360deg); }
+    }
+
+    /* NAVBAR - Static at top */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(128, 61, 59, 0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(128, 61, 59, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .header-left h1 {
+      font-size: 2rem;
+      color: #803D3B;
+      font-weight: 900;
+      margin-bottom: 5px;
+      letter-spacing: -0.5px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .header-left h1:after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #803D3B;
+      transition: width 0.3s ease;
+    }
+
+    .header:hover .header-left h1:after {
+      width: 100%;
+    }
+
+    .header-left p {
+      color: #666;
+      font-size: 0.95rem;
+      display: none; /* Removed "Predictive Maintenance Platform" */
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-greeting {
+      font-size: 1.1rem;
+      color: #803D3B;
+      font-weight: 600;
+      padding: 8px 16px;
+      
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .user-greeting:hover {
+      background: rgba(128, 61, 59, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #803D3B 0%, #5f2b28 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(128, 61, 59, 0.3);
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(128, 61, 59, 0.4);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(128, 61, 59, 0.15);
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 20px 45px rgba(128, 61, 59, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      color: #803D3B;
+      margin-bottom: 30px;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    h2:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #803D3B, transparent);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #803D3B;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group label i {
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-group input:focus {
+      border-color: #803D3B;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(128, 61, 59, 0.12);
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 1);
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 5px;
+      color: #666;
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      background: rgba(128, 61, 59, 0.05);
+      border-radius: 6px;
+      border-left: 3px solid #803D3B;
+    }
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 30px auto 0;
+      padding: 18px;
+      background: linear-gradient(135deg, #803D3B 0%, #5f2b28 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 15px rgba(128, 61, 59, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover:before {
+      left: 100%;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(128, 61, 59, 0.4);
+    }
+
+    .btn-submit:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading {
+      text-align: center;
+      color: #803D3B;
+      font-size: 1.1rem;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        padding: 15px 20px;
+      }
+
+      .header-right {
+        flex-direction: column;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 25px;
+        margin: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>FaultX</h1>
+      <p>Predictive Maintenance Platform</p>
+    </div>
+    <div class="header-right">
+      <span class="user-greeting">Hello, <span id="userName">User</span>!</span>
+      <div class="nav-buttons">
+        <a href="/history" class="nav-btn"><i class="fas fa-history"></i> History</a>
+        <button class="nav-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2><i class="fas fa-cogs"></i> Equipment Parameters Input</h2>
+    
+    <form id="predictionForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="temperature"><i class="fas fa-thermometer-half"></i> Temperature (°C)</label>
+          <input type="number" id="temperature" step="0.1" required placeholder="e.g., 310">
+        </div>
+
+        <div class="form-group">
+          <label for="rotation_speed"><i class="fas fa-tachometer-alt"></i> Rotation Speed (RPM)</label>
+          <input type="number" id="rotation_speed" step="1" required placeholder="e.g., 1500">
+        </div>
+
+        <div class="form-group">
+          <label for="torque"><i class="fas fa-cog"></i> Torque (Nm)</label>
+          <input type="number" id="torque" step="0.1" required placeholder="e.g., 40">
+        </div>
+
+        <div class="form-group">
+          <label for="tool_wear"><i class="fas fa-tools"></i> Tool Wear (min)</label>
+          <input type="number" id="tool_wear" step="1" required placeholder="e.g., 120">
+        </div>
+
+        <div class="form-group">
+          <label for="power"><i class="fas fa-bolt"></i> Power (kW)</label>
+          <input type="number" id="power" step="0.01" required placeholder="e.g., 6.5">
+        </div>
+
+        <div class="form-group">
+          <label for="vibration"><i class="fas fa-wave-square"></i> Vibration (mm/s)</label>
+          <input type="number" id="vibration" step="0.01" required placeholder="e.g., 0.5">
+        </div>
+
+        <div class="form-group">
+          <label for="pressure"><i class="fas fa-weight-hanging"></i> Pressure (bar)</label>
+          <input type="number" id="pressure" step="0.1" required placeholder="e.g., 100">
+        </div>
+
+        <div class="form-group">
+          <label for="current"><i class="fas fa-bolt"></i> Current (A)</label>
+          <input type="number" id="current" step="0.1" required placeholder="e.g., 50">
+        </div>
+
+        <div class="form-group">
+          <label for="voltage"><i class="fas fa-plug"></i> Voltage (V)</label>
+          <input type="number" id="voltage" step="0.1" required placeholder="e.g., 220">
+        </div>
+
+        <div class="form-group">
+          <label for="ambient_temp"><i class="fas fa-temperature-low"></i> Ambient Temperature (°C)</label>
+          <input type="number" id="ambient_temp" step="0.1" required placeholder="e.g., 295">
+        </div>
+
+        <div class="form-group">
+          <label for="humidity"><i class="fas fa-tint"></i> Humidity (%)</label>
+          <input type="number" id="humidity" step="0.1" required placeholder="e.g., 50">
+        </div>
+
+        <div class="form-group">
+          <label for="operational_hours"><i class="fas fa-clock"></i> Operational Hours</label>
+          <input type="number" id="operational_hours" step="1" required placeholder="e.g., 1500">
+        </div>
+
+        <div class="form-group">
+          <label for="cycles_completed"><i class="fas fa-redo"></i> Cycles Completed</label>
+          <input type="number" id="cycles_completed" step="1" required placeholder="e.g., 5000">
+        </div>
+
+        <div class="form-group">
+          <label for="quality_score"><i class="fas fa-star"></i> Quality Score (%)</label>
+          <input type="number" id="quality_score" step="0.1" min="0" max="100" required placeholder="e.g., 92.5">
+        </div>
+
+        <div class="form-group">
+          <label for="efficiency"><i class="fas fa-chart-line"></i> Efficiency (%)</label>
+          <input type="number" id="efficiency" step="0.1" min="0" max="100" required placeholder="e.g., 88.5">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <i class="fas fa-chart-line"></i> Analyze Equipment
+      </button>
+
+      <div class="loading" id="loadingMsg">
+        <i class="fas fa-spinner fa-spin"></i> Analyzing data...
+      </div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged,
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { 
+      getDatabase, 
+      ref, 
+      get,
+      push
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA3bhBOR1rCYH4h0bj-yWIyW9mYbykyKMY",
+      authDomain: "faultx-51e09.firebaseapp.com",
+      databaseURL: "https://faultx-51e09-default-rtdb.firebaseio.com",
+      projectId: "faultx-51e09",
+      storageBucket: "faultx-51e09.firebasestorage.app",
+      messagingSenderId: "689480842838",
+      appId: "1:689480842838:web:9f83220881890956bf85f7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let currentUser = null;
+
+    // Check authentication
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        
+        // Fetch user profile
+        const userRef = ref(db, 'users/' + user.uid);
+        const snapshot = await get(userRef);
+        
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          document.getElementById('userName').textContent = userData.full_name || 'User';
+        }
+      } else {
+        window.location.href = '/';
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    });
+
+    // Form submission
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const loadingMsg = document.getElementById('loadingMsg');
+
+      submitBtn.disabled = true;
+      loadingMsg.classList.add('active');
+
+      const formData = {
+        temperature: parseFloat(document.getElementById('temperature').value),
+        rotation_speed: parseFloat(document.getElementById('rotation_speed').value),
+        torque: parseFloat(document.getElementById('torque').value),
+        tool_wear: parseFloat(document.getElementById('tool_wear').value),
+        power: parseFloat(document.getElementById('power').value),
+        vibration: parseFloat(document.getElementById('vibration').value),
+        pressure: parseFloat(document.getElementById('pressure').value),
+        current: parseFloat(document.getElementById('current').value),
+        voltage: parseFloat(document.getElementById('voltage').value),
+        ambient_temp: parseFloat(document.getElementById('ambient_temp').value),
+        humidity: parseFloat(document.getElementById('humidity').value),
+        operational_hours: parseFloat(document.getElementById('operational_hours').value),
+        cycles_completed: parseFloat(document.getElementById('cycles_completed').value),
+        quality_score: parseFloat(document.getElementById('quality_score').value),
+        efficiency: parseFloat(document.getElementById('efficiency').value)
+      };
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Save to Firebase
+          if (currentUser) {
+            await push(ref(db, 'users/' + currentUser.uid + '/predictions'), result);
+          }
+
+          // Store in sessionStorage and redirect
+          sessionStorage.setItem('predictionResult', JSON.stringify(result));
+          window.location.href = '/results';
+        } else {
+          alert('Error: ' + (result.error || 'Prediction failed'));
+          submitBtn.disabled = false;
+          loadingMsg.classList.remove('active');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to analyze data. Please try again.');
+        submitBtn.disabled = false;
+        loadingMsg.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

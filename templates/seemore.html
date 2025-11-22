@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FaultX - Failure Types</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #803D3B;
+      --primary-dark: #5f2b28;
+      --accent-color: #EAD8C0;
+      --light-bg: #F5E9D9;
+      --card-bg: #ffffff;
+      --text-dark: #333;
+      --text-light: #444;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--accent-color) 0%, var(--light-bg) 50%, var(--accent-color) 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 80px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+
+    .brand {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--primary-color);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .brand:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-links a {
+      margin-left: 15px;
+      padding: 10px 24px;
+      text-decoration: none;
+      color: var(--text-dark);
+      border-radius: 8px;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+      background: rgba(128, 61, 59, 0.07);
+    }
+
+    .login-btn {
+      background: var(--primary-color);
+      color: #fff !important;
+      box-shadow: 0px 4px 15px rgba(128, 61, 59, 0.4);
+    }
+
+    .login-btn:hover {
+      background: var(--primary-dark) !important;
+      transform: translateY(-2px);
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 60px;
+      font-size: 48px;
+      color: #1a1a1a;
+      font-weight: 800;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .wrapper {
+      padding: 40px 80px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .failure-card {
+      width: 330px;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+      border-left: 6px solid var(--primary-color);
+      transition: 0.4s ease;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(50px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .failure-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(128, 61, 59, 0.03) 0%, rgba(234, 216, 192, 0.03) 100%);
+      z-index: 0;
+    }
+
+    .failure-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(128, 61, 59, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      background: rgba(128, 61, 59, 0.1);
+      color: var(--primary-color);
+      font-size: 22px;
+      transition: 0.3s;
+    }
+
+    .failure-card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+      background: rgba(128, 61, 59, 0.15);
+    }
+
+    .failure-card h2 {
+      margin-bottom: 0;
+      font-size: 22px;
+      color: var(--primary-color);
+    }
+
+    .failure-card p {
+      font-size: 15px;
+      color: var(--text-light);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .output-box {
+      background: #f8efe7;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      border-left: 4px solid var(--primary-dark);
+      font-family: monospace;
+      white-space: pre-line;
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+      transition: 0.3s;
+    }
+
+    .failure-card:hover .output-box {
+      transform: translateX(5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 20px;
+      }
+      
+      .wrapper {
+        padding: 20px;
+      }
+      
+      .failure-card {
+        width: 100%;
+        max-width: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="brand" onclick="window.location.href='/'">FaultX</div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+  </div>
+</nav>
+
+<h1>Failure Type Insights</h1>
+
+<div class="wrapper">
+
+  <!-- No Failure -->
+  <div class="failure-card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h2>No Failure</h2>
+    </div>
+    <p>System is operating normally with no abnormalities detected.</p>
+    <div class="output-box">
+Priority: LOW  
+Maintenance Window: NORMAL  
+Potential Savings: ₹0  
+Root Causes: No critical issues detected  
+Alerts: ✓ System operating normally
+    </div>
+  </div>
+
+  <!-- Heat Dissipation -->
+  <div class="failure-card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="fas fa-temperature-high"></i>
+      </div>
+      <h2>Heat Dissipation Failure</h2>
+    </div>
+    <p>Temperature exceeds safe threshold, indicating inefficient cooling.</p>
+    <div class="output-box">
+Priority: HIGH  
+Maintenance Window: IMMEDIATE  
+Potential Savings: ₹36,000+  
+Root Causes: Cooling fan slow, clogged vents, poor lubrication  
+Alerts: ⚠ Overheating detected
+    </div>
+  </div>
+
+  <!-- Power Failure -->
+  <div class="failure-card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="fas fa-bolt"></i>
+      </div>
+      <h2>Power Failure</h2>
+    </div>
+    <p>Voltage fluctuation or unstable power source affecting machine reliability.</p>
+    <div class="output-box">
+Priority: CRITICAL  
+Maintenance Window: URGENT  
+Potential Savings: ₹52,000+  
+Root Causes: Loose wiring, unstable grid voltage, motor overload  
+Alerts: ⚠ System running under unstable voltage
+    </div>
+  </div>
+
+  <!-- Overstrain -->
+  <div class="failure-card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="fas fa-weight-hanging"></i>
+      </div>
+      <h2>Overstrain Failure</h2>
+    </div>
+    <p>Excessive mechanical load or excessive torque beyond design limits.</p>
+    <div class="output-box">
+Priority: HIGH  
+Maintenance Window: FAST ACTION REQUIRED  
+Potential Savings: ₹44,000+  
+Root Causes: Excessive torque, incorrect load, belt tension issue  
+Alerts: ⚠ Unsafe stress level detected
+    </div>
+  </div>
+
+  <!-- Tool Wear -->
+  <div class="failure-card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="fas fa-tools"></i>
+      </div>
+      <h2>Tool Wear Failure</h2>
+    </div>
+    <p>Degradation of mechanical components affecting output performance.</p>
+    <div class="output-box">
+Priority: MEDIUM  
+Maintenance Window: BEFORE NEXT CYCLE  
+Potential Savings: ₹18,000+  
+Root Causes: Dull blade, material corrosion, improper lubrication  
+Alerts: ⚠ Efficiency degradation detected
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Fade-in animation
+  window.onload = () => {
+    document.querySelectorAll('.failure-card').forEach((card, index) => {
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 150);
+    });
+  };
+</script>
+
+</body>
+</html>

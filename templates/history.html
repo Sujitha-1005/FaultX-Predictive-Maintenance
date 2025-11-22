@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FaultX - Prediction History</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #EAD8C0 0%, #F5E9D9 50%, #EAD8C0 100%);
+      color: #333;
+      min-height: 100vh;
+      padding: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body:before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(128,61,59,0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: float 20s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(-50px, -50px) rotate(360deg); }
+    }
+
+    /* NAVBAR - Static at top */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(128, 61, 59, 0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(128, 61, 59, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .header-left h1 {
+      font-size: 2rem;
+      color: #803D3B;
+      font-weight: 900;
+      margin-bottom: 5px;
+      letter-spacing: -0.5px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .header-left h1:after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #803D3B;
+      transition: width 0.3s ease;
+    }
+
+    .header:hover .header-left h1:after {
+      width: 100%;
+    }
+
+    .header-left p {
+      color: #666;
+      font-size: 0.95rem;
+      display: none; /* Removed "Predictive Maintenance Platform" */
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-greeting {
+      font-size: 1.1rem;
+      color: #803D3B;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .user-greeting:hover {
+      background: rgba(128, 61, 59, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #803D3B 0%, #5f2b28 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(128, 61, 59, 0.3);
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(128, 61, 59, 0.4);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #803D3B;
+      margin-bottom: 40px;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .page-title:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #803D3B, transparent);
+    }
+
+    .stats-bar {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(128, 61, 59, 0.12);
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .stats-bar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(128, 61, 59, 0.18);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #803D3B;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .filter-bar {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(128, 61, 59, 0.12);
+      margin-bottom: 30px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .filter-bar:hover {
+      box-shadow: 0 15px 30px rgba(128, 61, 59, 0.18);
+    }
+
+    .filter-bar select, .filter-bar input {
+      padding: 10px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .filter-bar select:focus, .filter-bar input:focus {
+      border-color: #803D3B;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(128, 61, 59, 0.12);
+    }
+
+    .loading-msg {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1.3rem;
+      color: #803D3B;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(128, 61, 59, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .no-history {
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(128, 61, 59, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .no-history:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(128, 61, 59, 0.18);
+    }
+
+    .no-history i {
+      font-size: 4rem;
+      color: #803D3B;
+      margin-bottom: 20px;
+    }
+
+    .no-history h3 {
+      font-size: 1.8rem;
+      color: #803D3B;
+      margin-bottom: 15px;
+    }
+
+    .no-history p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .history-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .history-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(128, 61, 59, 0.12);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-left: 5px solid #803D3B;
+    }
+
+    .history-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(128, 61, 59, 0.18);
+    }
+
+    .history-card.critical {
+      border-left-color: #d32f2f;
+    }
+
+    .history-card.high {
+      border-left-color: #f57c00;
+    }
+
+    .history-card.medium {
+      border-left-color: #ffa726;
+    }
+
+    .history-card.low {
+      border-left-color: #66bb6a;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #803D3B;
+    }
+
+    .card-date {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .priority-badge {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .priority-badge.CRITICAL {
+      background: linear-gradient(135deg, #d32f2f, #b71c1c);
+      color: #fff;
+    }
+
+    .priority-badge.HIGH {
+      background: linear-gradient(135deg, #f57c00, #e65100);
+      color: #fff;
+    }
+
+    .priority-badge.MEDIUM {
+      background: linear-gradient(135deg, #ffa726, #fb8c00);
+      color: #fff;
+    }
+
+    .priority-badge.LOW {
+      background: linear-gradient(135deg, #66bb6a, #43a047);
+      color: #fff;
+    }
+
+    .card-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .metric-item {
+      text-align: center;
+      padding: 10px;
+      background: rgba(128, 61, 59, 0.05);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .metric-item:hover {
+      background: rgba(128, 61, 59, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .metric-item-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .metric-item-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #803D3B;
+    }
+
+    .card-alerts {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(128, 61, 59, 0.1);
+    }
+
+    .card-alerts h4 {
+      font-size: 1rem;
+      color: #803D3B;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .alert-tag {
+      display: inline-block;
+      padding: 5px 12px;
+      margin: 3px;
+      background: rgba(128, 61, 59, 0.1);
+      border-radius: 15px;
+      font-size: 0.85rem;
+      color: #803D3B;
+      transition: all 0.3s ease;
+    }
+
+    .alert-tag:hover {
+      background: rgba(128, 61, 59, 0.2);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        padding: 15px 20px;
+      }
+
+      .header-right {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .nav-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .nav-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stats-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+      }
+
+      .filter-bar select, .filter-bar input {
+        width: 100%;
+      }
+
+      .card-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 0 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>FaultX</h1>
+      <p>Prediction History</p>
+    </div>
+    <div class="header-right">
+      <span class="user-greeting">Hello, <span id="userName">User</span>!</span>
+      <div class="nav-buttons">
+        <a href="/input" class="nav-btn"><i class="fas fa-plus"></i> New Analysis</a>
+        <button class="nav-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1 class="page-title"><i class="fas fa-history"></i> Analysis History</h1>
+
+    <div class="stats-bar" id="statsBar" style="display: none;">
+      <div class="stat-item">
+        <div class="stat-value" id="totalPredictions">0</div>
+        <div class="stat-label">Total Analyses</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="failureCount">0</div>
+        <div class="stat-label">Failures Detected</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="criticalCount">0</div>
+        <div class="stat-label">Critical Priority</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="avgHealth">0%</div>
+        <div class="stat-label">Avg Health Score</div>
+      </div>
+    </div>
+
+    <div class="filter-bar" id="filterBar" style="display: none;">
+      <label style="font-weight: 600; color: #803D3B;">Filter by:</label>
+      <select id="priorityFilter">
+        <option value="all">All Priorities</option>
+        <option value="CRITICAL">Critical</option>
+        <option value="HIGH">High</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="LOW">Low</option>
+      </select>
+      <select id="failureFilter">
+        <option value="all">All Results</option>
+        <option value="yes">Failures Only</option>
+        <option value="no">No Failures</option>
+      </select>
+    </div>
+
+    <div class="loading-msg" id="loadingMsg">
+      <i class="fas fa-spinner fa-spin"></i> Loading history...
+    </div>
+
+    <div class="no-history" id="noHistory" style="display: none;">
+      <i class="fas fa-inbox"></i>
+      <h3>No Analysis History</h3>
+      <p>You haven't performed any equipment analyses yet.</p>
+      <a href="/input" class="nav-btn"><i class="fas fa-plus"></i> Start Your First Analysis</a>
+    </div>
+
+    <div class="history-grid" id="historyGrid"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged,
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { 
+      getDatabase, 
+      ref, 
+      get
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA3bhBOR1rCYH4h0bj-yWIyW9mYbykyKMY",
+      authDomain: "faultx-51e09.firebaseapp.com",
+      databaseURL: "https://faultx-51e09-default-rtdb.firebaseio.com",
+      projectId: "faultx-51e09",
+      storageBucket: "faultx-51e09.firebasestorage.app",
+      messagingSenderId: "689480842838",
+      appId: "1:689480842838:web:9f83220881890956bf85f7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let allPredictions = [];
+    let filteredPredictions = [];
+
+    // Check authentication
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Fetch user profile
+        const userRef = ref(db, 'users/' + user.uid);
+        const snapshot = await get(userRef);
+        
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          document.getElementById('userName').textContent = userData.full_name || 'User';
+        }
+
+        // Load predictions
+        await loadPredictions(user.uid);
+      } else {
+        window.location.href = '/';
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    });
+
+    async function loadPredictions(uid) {
+      const predictionsRef = ref(db, 'users/' + uid + '/predictions');
+      const snapshot = await get(predictionsRef);
+
+      document.getElementById('loadingMsg').style.display = 'none';
+
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        allPredictions = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value
+        })).reverse(); // Most recent first
+
+        filteredPredictions = [...allPredictions];
+        displayStats();
+        displayPredictions();
+        
+        document.getElementById('statsBar').style.display = 'grid';
+        document.getElementById('filterBar').style.display = 'flex';
+      } else {
+        document.getElementById('noHistory').style.display = 'block';
+      }
+    }
+
+    function displayStats() {
+      const total = allPredictions.length;
+      const failures = allPredictions.filter(p => p.failure_predicted).length;
+      const critical = allPredictions.filter(p => p.priority === 'CRITICAL').length;
+      const avgHealth = allPredictions.reduce((sum, p) => sum + p.health_score, 0) / total;
+
+      document.getElementById('totalPredictions').textContent = total;
+      document.getElementById('failureCount').textContent = failures;
+      document.getElementById('criticalCount').textContent = critical;
+      document.getElementById('avgHealth').textContent = avgHealth.toFixed(1) + '%';
+    }
+
+    function displayPredictions() {
+      const grid = document.getElementById('historyGrid');
+      grid.innerHTML = '';
+
+      if (filteredPredictions.length === 0) {
+        grid.innerHTML = '<div class="no-history"><i class="fas fa-filter"></i><h3>No Results</h3><p>No predictions match your filters.</p></div>';
+        return;
+      }
+
+      filteredPredictions.forEach(prediction => {
+        const card = document.createElement('div');
+        card.className = 'history-card ' + prediction.priority.toLowerCase();
+
+        const date = new Date(prediction.timestamp);
+        const formattedDate = date.toLocaleString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        card.innerHTML = `
+          <div class="card-header">
+            <div>
+              <div class="card-title">${prediction.failure_predicted ? prediction.failure_type : 'Normal Operation'}</div>
+              <div class="card-date"><i class="far fa-clock"></i> ${formattedDate}</div>
+            </div>
+            <span class="priority-badge ${prediction.priority}">${prediction.priority}</span>
+          </div>
+
+          <div class="card-metrics">
+            <div class="metric-item">
+              <div class="metric-item-label">Failure Risk</div>
+              <div class="metric-item-value">${prediction.failure_probability.toFixed(1)}%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-item-label">RUL</div>
+              <div class="metric-item-value">${Math.round(prediction.rul_hours)} hrs</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-item-label">Health</div>
+              <div class="metric-item-value">${prediction.health_score.toFixed(1)}%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-item-label">Savings</div>
+              <div class="metric-item-value">₹${(prediction.potential_savings / 1000).toFixed(0)}K</div>
+            </div>
+          </div>
+
+          <div class="card-alerts">
+            <h4><i class="fas fa-tools"></i> ${prediction.maintenance_window}</h4>
+            <div>
+              ${prediction.alerts.slice(0, 3).map(alert => 
+                `<span class="alert-tag">${alert.substring(0, 60)}${alert.length > 60 ? '...' : ''}</span>`
+              ).join('')}
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Filters
+    document.getElementById('priorityFilter').addEventListener('change', applyFilters);
+    document.getElementById('failureFilter').addEventListener('change', applyFilters);
+
+    function applyFilters() {
+      const priorityFilter = document.getElementById('priorityFilter').value;
+      const failureFilter = document.getElementById('failureFilter').value;
+
+      filteredPredictions = allPredictions.filter(p => {
+        const matchesPriority = priorityFilter === 'all' || p.priority === priorityFilter;
+        const matchesFailure = failureFilter === 'all' || 
+          (failureFilter === 'yes' && p.failure_predicted) ||
+          (failureFilter === 'no' && !p.failure_predicted);
+        
+        return matchesPriority && matchesFailure;
+      });
+
+      displayPredictions();
+    }
+  </script>
+</body>
+</html>

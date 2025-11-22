@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FaultX - Predictive Maintenance Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #EAD8C0 0%, #F5E9D9 50%, #EAD8C0 100%);
+      color: #333;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* NAVBAR */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 80px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(128, 61, 59, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    nav:hover {
+      box-shadow: 0 6px 30px rgba(128, 61, 59, 0.15);
+    }
+
+    .brand {
+      font-size: 36px;
+      font-weight: 900;
+      color: #803D3B;
+      letter-spacing: -1px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .brand::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #803D3B;
+      transition: width 0.3s ease;
+    }
+
+    .brand:hover::after {
+      width: 100%;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-links a {
+      padding: 10px 24px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 16px;
+      border-radius: 8px;
+      position: relative;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .nav-links a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(128, 61, 59, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav-links a:hover::before {
+      left: 100%;
+    }
+
+    .nav-links a:hover {
+      color: #803D3B;
+      background: rgba(128, 61, 59, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.login-btn {
+      background: #803D3B;
+      color: white;
+      box-shadow: 0 4px 15px rgba(128, 61, 59, 0.3);
+    }
+
+    .nav-links a.login-btn:hover {
+      background: #5f2b28;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(128, 61, 59, 0.4);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 140px 80px 100px;
+      max-width: 750px;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-size: 58px;
+      line-height: 1.2;
+      margin-bottom: 25px;
+      color: #1a1a1a;
+      font-weight: 800;
+    }
+
+    .hero h1 span {
+      color: #803D3B;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero h1 span::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #803D3B;
+      opacity: 0.3;
+    }
+
+    .hero p {
+      font-size: 22px;
+      margin-bottom: 35px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #803D3B 0%, #5f2b28 100%);
+      padding: 16px 40px;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 25px rgba(128, 61, 59, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(128, 61, 59, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    /* SLIDER SECTION */
+    .slider-section {
+      padding: 80px 0;
+      background: rgba(255, 255, 255, 0.3);
+      margin-top: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slider-header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 0 80px;
+    }
+
+    .slider-header h2 {
+      font-size: 42px;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+      font-weight: 800;
+    }
+
+    .slider-header p {
+      font-size: 18px;
+      color: #666;
+    }
+
+    .slider-container {
+      padding: 20px 80px;
+      display: flex;
+      gap: 35px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+    }
+
+    .slider-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .slider-container::-webkit-scrollbar-track {
+      background: rgba(128, 61, 59, 0.1);
+      border-radius: 10px;
+    }
+
+    .slider-container::-webkit-scrollbar-thumb {
+      background: #803D3B;
+      border-radius: 10px;
+    }
+
+    .card {
+      min-width: 320px;
+      height: 280px;
+      padding: 35px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+      scroll-snap-align: center;
+      cursor: pointer;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(128, 61, 59, 0.05), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .card:hover::before {
+      left: 100%;
+    }
+
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(128, 61, 59, 0.25);
+      border-color: #803D3B;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: #803D3B;
+      transition: width 0.3s ease;
+    }
+
+    .card:hover::after {
+      width: 100%;
+      opacity: 0.05;
+    }
+
+    .icon {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 20px;
+      display: inline-block;
+      transition: all 0.4s ease;
+      filter: grayscale(0.3);
+    }
+
+    .card:hover .icon {
+      transform: scale(1.2) rotate(5deg);
+      filter: grayscale(0);
+    }
+
+    .card h3 {
+      margin-bottom: 15px;
+      font-size: 24px;
+      color: #803D3B;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover h3 {
+      transform: translateX(5px);
+    }
+
+    .card p {
+      color: #666;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* SCROLL CONTROLS */
+    .scroll-controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .scroll-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #803D3B;
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(128, 61, 59, 0.3);
+    }
+
+    .scroll-btn:hover {
+      background: #5f2b28;
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(128, 61, 59, 0.4);
+    }
+
+    .scroll-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* AUTO SLIDE INDICATORS */
+    .slide-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(128, 61, 59, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .indicator.active {
+      background: #803D3B;
+      transform: scale(1.2);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav {
+        padding: 20px 30px;
+      }
+
+      .brand {
+        font-size: 28px;
+      }
+
+      .nav-links {
+        gap: 8px;
+      }
+
+      .nav-links a {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+
+      .hero {
+        padding: 80px 30px 60px;
+      }
+
+      .hero h1 {
+        font-size: 40px;
+      }
+
+      .hero p {
+        font-size: 18px;
+      }
+
+      .slider-container {
+        padding: 20px 30px;
+      }
+
+      .slider-header {
+        padding: 0 30px;
+      }
+
+      .slider-header h2 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="brand" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">FaultX</div>
+    <div class="nav-links">
+      <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Home</a>
+      <a href="/seemore" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">See More</a>
+      <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Keeping your <span>machines</span> one step ahead of problems.</h1>
+    <p>FaultX gives you clear insights to maintain smooth, reliable performance across all your equipment.</p>
+    <a class="btn" href="#features" onclick="event.preventDefault(); document.getElementById('features').scrollIntoView({behavior: 'smooth'});">Explore Features</a>
+  </section>
+
+  <section class="slider-section" id="features">
+    <div class="slider-header">
+      <h2>Powerful Features</h2>
+      <p>Discover how FaultX transforms your maintenance operations</p>
+    </div>
+    
+    <div class="slider-container" id="slider">
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#803D3B" stroke-width="2"/>
+          <path d="M12 8V12" stroke="#803D3B" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 16H12.01" stroke="#803D3B" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h3>Early Issue Detection</h3>
+        <p>Spots warning signs before they grow into major problems, saving you from unexpected downtime.</p>
+      </div>
+      
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 16V8.00002C20.9996 7.6493 20.9071 7.30483 20.7315 7.00119C20.556 6.69754 20.3037 6.44539 20 6.27002L13 2.27002C12.696 2.09449 12.3511 2.00208 12 2.00208C11.6489 2.00208 11.304 2.09449 11 2.27002L4 6.27002C3.69626 6.44539 3.44398 6.69754 3.26846 7.00119C3.09294 7.30483 3.00036 7.6493 3 8.00002V16C3.00036 16.3508 3.09294 16.6952 3.26846 16.9989C3.44398 17.3025 3.69626 17.5547 4 17.73L11 21.73C11.304 21.9056 11.6489 21.998 12 21.998C12.3511 21.998 12.696 21.9056 13 21.73L20 17.73C20.3037 17.5547 20.556 17.3025 20.7315 16.9989C20.9071 16.6952 20.9996 16.3508 21 16Z" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3.27002 6.95996L12 12L20.73 6.95996" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 22.08V12" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Health Insights</h3>
+        <p>Provides a clear view of machine condition with simple, actionable indicators at a glance.</p>
+      </div>
+      
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#803D3B" stroke-width="2"/>
+          <path d="M12 6V12L16 14" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Priority Guidance</h3>
+        <p>Highlights urgency levels to help you take timely action exactly when it's needed most.</p>
+      </div>
+      
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1V23" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Cost Awareness</h3>
+        <p>Shows potential savings opportunities for smarter, more efficient maintenance planning.</p>
+      </div>
+      
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 2V8H20" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 13H8" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 17H8" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 9H9H8" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Smart Scheduling</h3>
+        <p>Optimizes maintenance schedules based on actual equipment condition and usage patterns.</p>
+      </div>
+      
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 20V10" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 20V4" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 20V14" stroke="#803D3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Performance Tracking</h3>
+        <p>Monitors equipment performance trends over time to identify optimization opportunities.</p>
+      </div>
+    </div>
+
+    <div class="scroll-controls">
+      <button class="scroll-btn" onclick="scrollSlider('left')">‹</button>
+      <button class="scroll-btn" onclick="scrollSlider('right')">›</button>
+    </div>
+    
+    <div class="slide-indicators" id="indicators">
+      <!-- Indicators will be generated by JavaScript -->
+    </div>
+  </section>
+
+  <script>
+    let autoSlideInterval;
+    let currentSlide = 0;
+    const slideDuration = 4000; // 4 seconds between slides
+    
+    function scrollSlider(direction) {
+      const slider = document.getElementById('slider');
+      const scrollAmount = 355;
+      
+      if (direction === 'left') {
+        slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        currentSlide = Math.max(0, currentSlide - 1);
+      } else {
+        slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        currentSlide = Math.min(document.querySelectorAll('.card').length - 1, currentSlide + 1);
+      }
+      
+      updateIndicators();
+      resetAutoSlide();
+    }
+
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(() => {
+        const slider = document.getElementById('slider');
+        const cards = document.querySelectorAll('.card');
+        const cardWidth = 320 + 35; // card width + gap
+        
+        currentSlide = (currentSlide + 1) % cards.length;
+        slider.scrollTo({
+          left: currentSlide * cardWidth,
+          behavior: 'smooth'
+        });
+        
+        updateIndicators();
+      }, slideDuration);
+    }
+
+    function resetAutoSlide() {
+      clearInterval(autoSlideInterval);
+      startAutoSlide();
+    }
+
+    function updateIndicators() {
+      const indicators = document.querySelectorAll('.indicator');
+      indicators.forEach((indicator, index) => {
+        if (index === currentSlide) {
+          indicator.classList.add('active');
+        } else {
+          indicator.classList.remove('active');
+        }
+      });
+    }
+
+    function createIndicators() {
+      const indicatorsContainer = document.getElementById('indicators');
+      const cards = document.querySelectorAll('.card');
+      
+      indicatorsContainer.innerHTML = '';
+      
+      cards.forEach((_, index) => {
+        const indicator = document.createElement('div');
+        indicator.className = 'indicator';
+        if (index === 0) indicator.classList.add('active');
+        
+        indicator.addEventListener('click', () => {
+          const slider = document.getElementById('slider');
+          const cardWidth = 320 + 35; // card width + gap
+          
+          currentSlide = index;
+          slider.scrollTo({
+            left: currentSlide * cardWidth,
+            behavior: 'smooth'
+          });
+          
+          updateIndicators();
+          resetAutoSlide();
+        });
+        
+        indicatorsContainer.appendChild(indicator);
+      });
+    }
+
+    // Add scroll animation on load
+    window.addEventListener('load', () => {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.6s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+      
+      createIndicators();
+      startAutoSlide();
+    });
+
+    // Add auto-scroll on mouse wheel in slider area
+    const slider = document.getElementById('slider');
+    slider.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      slider.scrollLeft += e.deltaY;
+      resetAutoSlide();
+    });
+    
+    // Pause auto-slide when hovering over slider
+    slider.addEventListener('mouseenter', () => {
+      clearInterval(autoSlideInterval);
+    });
+    
+    slider.addEventListener('mouseleave', () => {
+      startAutoSlide();
+    });
+  </script>
+</body>
+</html>
