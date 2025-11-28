@@ -157,6 +157,12 @@ firebaseConfig = {
 ```
 
 ---
+## 🎥 Demo Video
+
+Click to watch the full project demo:
+
+👉 [https://drive.google.com/..](https://drive.google.com/file/d/1fzEnzKMUfNuY_0m0M89OoT2RhfxdbO9f/view?usp=sharing)
+
 
 ## 🤝 Contributing
 
